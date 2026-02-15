@@ -20,6 +20,25 @@ const walkabilityBar = (level: number) => (
   </div>
 );
 
+function ListSection({ title, items, icon }: { title: string; items: string[]; icon: string }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div>
+      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        {icon} {title}
+      </h3>
+      <ul className="space-y-1">
+        {items.map((item) => (
+          <li key={item} className="text-sm text-gray-700 flex items-start gap-2">
+            <span className="text-emerald-500 mt-1 shrink-0">&bull;</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function NeighborhoodDetail() {
   const { id } = useParams<{ id: string }>();
   const neighborhood = getNeighborhoodById(id || '');
@@ -66,6 +85,13 @@ export default function NeighborhoodDetail() {
         <div className="p-6 space-y-6">
           <p className="text-gray-700 text-base leading-relaxed">{n.description}</p>
 
+          {/* Insider Tip */}
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+            <h3 className="text-sm font-bold text-amber-800 mb-1">Insider Tip</h3>
+            <p className="text-sm text-amber-900">{n.insiderTip}</p>
+          </div>
+
+          {/* At a Glance + Schools */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
@@ -104,26 +130,80 @@ export default function NeighborhoodDetail() {
             </div>
           </div>
 
+          {/* Best For / Not Great For */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-emerald-50 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-emerald-700 uppercase tracking-wide mb-2">
+                Best For
+              </h3>
+              <ul className="space-y-1">
+                {n.bestFor.map((item) => (
+                  <li key={item} className="text-sm text-emerald-800 flex items-start gap-2">
+                    <span className="shrink-0">+</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-red-50 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">
+                Not Great For
+              </h3>
+              <ul className="space-y-1">
+                {n.notGreatFor.map((item) => (
+                  <li key={item} className="text-sm text-red-800 flex items-start gap-2">
+                    <span className="shrink-0">-</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Known For */}
           <div>
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Highlights
+              Known For
             </h3>
             <div className="flex flex-wrap gap-2">
-              {n.highlights.map((h) => (
+              {n.knownFor.map((item) => (
                 <span
-                  key={h}
+                  key={item}
                   className="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium"
                 >
-                  {h}
+                  {item}
                 </span>
               ))}
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Tags
+          {/* Local Scene */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <ListSection title="Local Dining" items={n.localDining} icon="🍽" />
+            <ListSection title="Shopping & Markets" items={n.localShopping} icon="🛍" />
+            <ListSection title="Parks & Recreation" items={n.parksAndRec} icon="🌳" />
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                🚗 Commute Reality
+              </h3>
+              <p className="text-sm text-gray-700">{n.commuteNotes}</p>
+            </div>
+          </div>
+
+          {/* Housing Stock */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              Housing Stock
             </h3>
+            <p className="text-sm text-gray-700">{n.housingStock}</p>
+          </div>
+
+          {/* Local Lore */}
+          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg">
+            <h3 className="text-sm font-bold text-indigo-800 mb-1">Local Lore</h3>
+            <p className="text-sm text-indigo-900">{n.localLore}</p>
+          </div>
+
+          {/* Tags */}
+          <div>
             <div className="flex flex-wrap gap-2">
               {n.tags.map((t) => (
                 <span

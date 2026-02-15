@@ -38,6 +38,15 @@ export default function NeighborhoodCard({ neighborhood }: { neighborhood: Neigh
         </div>
         <p className="text-sm text-emerald-700 font-medium mb-2">{n.vibe}</p>
         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{n.description}</p>
+        {n.knownFor && n.knownFor.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {n.knownFor.slice(0, 2).map((item) => (
+              <span key={item} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                {item}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <span>Walkability:</span>
@@ -46,7 +55,7 @@ export default function NeighborhoodCard({ neighborhood }: { neighborhood: Neigh
           <span className="font-semibold text-gray-700">{n.avgPrice}</span>
         </div>
         <div className="mt-2 text-xs text-gray-500">
-          {n.elementary} → {n.middleSchool} → {n.highSchool}
+          {n.elementary} &rarr; {n.middleSchool} &rarr; {n.highSchool}
         </div>
       </div>
     </Link>
