@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NeighborhoodListIsland from '../components/NeighborhoodListIsland';
+---
+
+<BaseLayout
+  title="Explore 40 Neighborhoods"
+  description="Bethesda Unfiltered: honest, insider guides to 40 neighborhoods in Bethesda, Chevy Chase, and NW DC — organized by school cluster with real local details."
+>
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Explore 40 Neighborhoods
+      </h1>
+      <p class="text-gray-600">
+        Bethesda, Chevy Chase, and nearby DC — organized by school cluster with
+        honest, unfiltered takes.
+      </p>
+    </div>
+
+    <NeighborhoodListIsland client:load />
+  </div>
+</BaseLayout>

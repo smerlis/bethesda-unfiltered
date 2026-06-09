@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { neighborhoods, SCHOOL_CLUSTERS } from '../data/neighborhoods';
 import type { SchoolCluster } from '../data/neighborhoods';
-import NeighborhoodCard from '../components/NeighborhoodCard';
+import NeighborhoodCard from './NeighborhoodCard';
 
-export default function NeighborhoodList() {
+export default function NeighborhoodListIsland() {
   const [search, setSearch] = useState('');
   const [clusterFilter, setClusterFilter] = useState<SchoolCluster | 'all'>('all');
   const [walkabilityMin, setWalkabilityMin] = useState(1);
@@ -26,23 +26,12 @@ export default function NeighborhoodList() {
     } else if (sortBy === 'walkability') {
       result = [...result].sort((a, b) => b.walkability - a.walkability);
     }
-    // 'cluster' keeps default order (grouped by cluster)
 
     return result;
   }, [search, clusterFilter, walkabilityMin, sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Explore 40 Neighborhoods
-        </h1>
-        <p className="text-gray-600">
-          Bethesda, Chevy Chase, and nearby DC — organized by school cluster with
-          honest, unfiltered takes.
-        </p>
-      </div>
-
+    <div>
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">

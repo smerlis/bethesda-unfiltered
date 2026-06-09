@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import type { Neighborhood } from '../data/neighborhoods';
 
 const walkabilityDots = (level: number) =>
@@ -21,8 +20,8 @@ const clusterColors: Record<string, string> = {
 export default function NeighborhoodCard({ neighborhood }: { neighborhood: Neighborhood }) {
   const n = neighborhood;
   return (
-    <Link
-      to={`/neighborhood/${n.id}`}
+    <a
+      href={`/neighborhood/${n.id}`}
       className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden"
     >
       <div className="p-5">
@@ -58,6 +57,6 @@ export default function NeighborhoodCard({ neighborhood }: { neighborhood: Neigh
           {n.elementary} &rarr; {n.middleSchool} &rarr; {n.highSchool}
         </div>
       </div>
-    </Link>
+    </a>
   );
 }

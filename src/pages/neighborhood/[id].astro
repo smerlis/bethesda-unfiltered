@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { neighborhoods, getNeighborhoodById } from '../../data/neighborhoods';
+
+export function getStaticPaths() {
+  return neighborhoods.map((n) => ({
+    params: { id: n.id },
+  }));
+}
+
+const { id } = Astro.params;
+const n = getNeighborhoodById(id!)!;
+
+const pageTitle = `${n.name} — ${n.vibe}`;
+const pageDescription = `${n.name} neighborhood guide: ${n.vibe}. ${n.schoolCluster} cluster (${n.elementary} → ${n.middleSchool} → ${n.highSchool}). ${n.avgPrice}. ${n.description.slice(0, 140)}...`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: n.name,
+  description: n.description,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: n.schoolCluster === 'Jackson-Reed DC' ? 'Washington' : 'Bethesda',
+    addressRegion: n.schoolCluster === 'Jackson-Reed DC' ? 'DC' : 'MD',
+    addressCountry: 'US',
+  },
+  additionalProperty: [
+    { '@type': 'PropertyValue', name: 'School Cluster', value: n.schoolCluster },
+    { '@type': 'PropertyValue', name: 'Elementary School', value: n.elementary },
+    { '@type': 'PropertyValue', name: 'Average Price', value: n.avgPrice },
+    { '@type': 'PropertyValue', name: 'Walkability', value: `${n.walkability}/5` },
+  ],
+};
+
+const clusterColors: Record<string, string> = {
+  Whitman: 'bg-blue-100 text-blue-800',
+  BCC: 'bg-purple-100 text-purple-800',
+  'Walter Johnson': 'bg-amber-100 text-amber-800',
+  'Jackson-Reed DC': 'bg-rose-100 text-rose-800',
+};
+
+const walkLevels = [1, 2, 3, 4, 5];
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <a
+      href="/"
+      class="inline-flex items-center text-sm text-emerald-600 hover:text-emerald-800 mb-6"
+    >
+      &larr; Back to all neighborhoods
+    </a>
+
+    <article class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="bg-gradient-to-r from-emerald-700 to-emerald-600 p-6 text-white">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 class="text-3xl font-bold mb-1">{n.name}</h1>
+            <p class="text-emerald-100 text-lg">{n.vibe}</p>
+          </div>
+          <span
+            class:list={[
+              'text-xs font-semibold px-3 py-1.5 rounded-full',
+              clusterColors[n.schoolCluster] || 'bg-gray-100 text-gray-800',
+            ]}
+          >
+            {n.schoolCluster}
+          </span>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <p class="text-gray-700 text-base leading-relaxed">{n.description}</p>
+
+        <!-- Insider Tip -->
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+          <h3 class="text-sm font-bold text-amber-800 mb-1">Insider Tip</h3>
+          <p class="text-sm text-amber-900">{n.insiderTip}</p>
+        </div>
+
+        <!-- At a Glance + Schools -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-gray-50 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              School Pipeline
+            </h3>
+            <div class="space-y-1 text-sm">
+              <div>
+                <span class="text-gray-500">Elementary:</span>{' '}
+                <span class="font-medium text-gray-900">{n.elementary}</span>
+              </div>
+              <div>
+                <span class="text-gray-500">Middle:</span>{' '}
+                <span class="font-medium text-gray-900">{n.middleSchool}</span>
+              </div>
+              <div>
+                <span class="text-gray-500">High:</span>{' '}
+                <span class="font-medium text-gray-900">{n.highSchool}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              At a Glance
+            </h3>
+            <div class="space-y-2">
+              <div>
+                <span class="text-sm text-gray-500">Avg Price:</span>{' '}
+                <span class="font-semibold text-gray-900">{n.avgPrice}</span>
+              </div>
+              <div>
+                <span class="text-sm text-gray-500">Walkability:</span>
+                <div class="flex items-center gap-1 mt-1">
+                  {walkLevels.map((i) => (
+                    <div
+                      class:list={[
+                        'h-3 w-8 rounded',
+                        i <= n.walkability ? 'bg-emerald-500' : 'bg-gray-200',
+                      ]}
+                    />
+                  ))}
+                  <span class="ml-2 text-sm text-gray-600">{n.walkability}/5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best For / Not Great For -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-emerald-50 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-emerald-700 uppercase tracking-wide mb-2">
+              Best For
+            </h3>
+            <ul class="space-y-1">
+              {n.bestFor.map((item) => (
+                <li class="text-sm text-emerald-800 flex items-start gap-2">
+                  <span class="shrink-0">+</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="bg-red-50 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-red-700 uppercase tracking-wide mb-2">
+              Not Great For
+            </h3>
+            <ul class="space-y-1">
+              {n.notGreatFor.map((item) => (
+                <li class="text-sm text-red-800 flex items-start gap-2">
+                  <span class="shrink-0">-</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Known For -->
+        <div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Known For
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            {n.knownFor.map((item) => (
+              <span class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-medium">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <!-- Local Scene -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {n.localDining.length > 0 && (
+            <div>
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Local Dining</h3>
+              <ul class="space-y-1">
+                {n.localDining.map((item) => (
+                  <li class="text-sm text-gray-700 flex items-start gap-2">
+                    <span class="text-emerald-500 mt-1 shrink-0">&bull;</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {n.localShopping.length > 0 && (
+            <div>
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Shopping & Markets</h3>
+              <ul class="space-y-1">
+                {n.localShopping.map((item) => (
+                  <li class="text-sm text-gray-700 flex items-start gap-2">
+                    <span class="text-emerald-500 mt-1 shrink-0">&bull;</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {n.parksAndRec.length > 0 && (
+            <div>
+              <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Parks & Recreation</h3>
+              <ul class="space-y-1">
+                {n.parksAndRec.map((item) => (
+                  <li class="text-sm text-gray-700 flex items-start gap-2">
+                    <span class="text-emerald-500 mt-1 shrink-0">&bull;</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div>
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Commute Reality</h3>
+            <p class="text-sm text-gray-700">{n.commuteNotes}</p>
+          </div>
+        </div>
+
+        <!-- Housing Stock -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Housing Stock
+          </h3>
+          <p class="text-sm text-gray-700">{n.housingStock}</p>
+        </div>
+
+        <!-- Local Lore -->
+        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg">
+          <h3 class="text-sm font-bold text-indigo-800 mb-1">Local Lore</h3>
+          <p class="text-sm text-indigo-900">{n.localLore}</p>
+        </div>
+
+        <!-- Tags -->
+        <div>
+          <div class="flex flex-wrap gap-2">
+            {n.tags.map((t) => (
+              <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded text-xs font-medium">
+                #{t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</BaseLayout>

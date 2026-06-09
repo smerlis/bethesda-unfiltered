@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QuizIsland from '../components/QuizIsland';
+---
+
+<BaseLayout
+  title="Find Your Fit Quiz"
+  description="Answer 6 quick questions and find the Bethesda/Chevy Chase/DC neighborhood that matches your lifestyle, budget, and priorities."
+>
+  <QuizIsland client:load />
+</BaseLayout>

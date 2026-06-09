@@ -1,11 +1,10 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { quizQuestions } from '../data/quiz';
 import { neighborhoods } from '../data/neighborhoods';
 import type { Neighborhood } from '../data/neighborhoods';
-import NeighborhoodCard from '../components/NeighborhoodCard';
+import NeighborhoodCard from './NeighborhoodCard';
 
-export default function Quiz() {
+export default function QuizIsland() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
   const [showResults, setShowResults] = useState(false);
@@ -73,12 +72,12 @@ export default function Quiz() {
           >
             Take Quiz Again
           </button>
-          <Link
-            to="/"
+          <a
+            href="/"
             className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors inline-block"
           >
             Browse All Neighborhoods
-          </Link>
+          </a>
         </div>
       </div>
     );
